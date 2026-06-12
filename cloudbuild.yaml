@@ -1,0 +1,14 @@
+steps:
+  # Step 1: Install all required Python libraries into the cloud runner environment
+  - name: 'python:3.11-slim'
+    entrypoint: 'pip'
+    args: ['install', 'requests', 'pandas', 'google-cloud-storage']
+
+  # Step 2: Execute your python pipeline script
+  - name: 'python:3.11-slim'
+    entrypoint: 'python'
+    args: ['test.py']
+
+options:
+  # This tells Cloud Build to log everything clearly so you can debug in the console
+  logging: CLOUD_LOGGING_ONLY
