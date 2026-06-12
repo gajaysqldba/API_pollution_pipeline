@@ -31,6 +31,9 @@ def upload_to_gcs_lake():
 
     if os.path.exists(LOCAL_CSV_FILE):
         os.remove(LOCAL_CSV_FILE)
+
+if __name__ == "__main__":
+    upload_to_gcs_lake()
         
 
 
