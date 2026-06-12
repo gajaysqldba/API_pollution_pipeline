@@ -1,14 +1,15 @@
 steps:
-  # Step 1: Install all required Python libraries into the cloud runner environment
+  # Step 0: Install packages directly into the shared workspace directory
   - name: 'python:3.11-slim'
     entrypoint: 'pip'
-    args: ['install', 'requests', 'pandas', 'google-cloud-storage']
+    args: ['install', '-t', '/workspace/lib', 'requests', 'pandas', 'google-cloud-storage']
 
-  # Step 2: Execute your python pipeline script
+  # Step 1: Run your script with an environment variable pointing to that library directory
   - name: 'python:3.11-slim'
     entrypoint: 'python'
+    env:
+      - 'PYTHONPATH=/workspace/lib'
     args: ['test.py']
 
 options:
-  # This tells Cloud Build to log everything clearly so you can debug in the console
   logging: CLOUD_LOGGING_ONLY
