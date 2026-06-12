@@ -7,7 +7,7 @@ API = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=17.3850&lo
 #GCP project
 PROJECT_ID = "bqdemo-496217"
 #GCP bucket name
-BUCKET_NAME = "bqdemo-496217-bucket"
+BUCKET_NAME = "gajay-customer-pipeline-data"
 #GCP blob name
 LOCAL_CSV_FILE = "air_quality_data.csv" 
 
