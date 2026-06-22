@@ -1,15 +1,27 @@
 steps:
-  # Step 0: Install packages directly into the shared workspace directory
-  - name: 'python:3.11-slim'
-    entrypoint: 'pip'
-    args: ['install', '-t', '/workspace/lib', 'requests', 'pandas', 'google-cloud-storage']
+  # Step 1: Build the Docker image from your Dockerfile
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/air-quality-repo/aq-pipeline-image:latest', 
+      '.'
+    ]
 
-  # Step 1: Run your script with an environment variable pointing to that library directory
-  - name: 'python:3.11-slim'
-    entrypoint: 'python'
-    env:
-      - 'PYTHONPATH=/workspace/lib'
-    args: ['test.py']
+  # Step 2: Push the compiled image into your Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 
+      'asia-south1-docker.pkg.dev/$PROJECT_ID/air-quality-repo/aq-pipeline-image:latest'
+    ]
+
+  # Step 3: Update the Cloud Run Job configuration to use the fresh container image
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'jobs', 'update', 'aq-hourly-fetch-job',
+      '--image', 'asia-south1-docker.pkg.dev/$PROJECT_ID/air-quality-repo/aq-pipeline-image:latest',
+      '--region', 'asia-south1'
+    ]
 
 options:
   logging: CLOUD_LOGGING_ONLY

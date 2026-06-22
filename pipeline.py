@@ -8,7 +8,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
 # --- CONFIGURATION LAYER ---
-PROJECT_ID = "your_gcp_project_id"
+PROJECT_ID = "bqdemo-496217"
 STAGING_TABLE = f"{PROJECT_ID}.staging.stg_raw_air_quality"
 HYDERABAD_LAT = 17.3850
 HYDERABAD_LON = 78.4867
