@@ -129,6 +129,8 @@ def main():
 
     # 3. Convert clean data array into a structured Pandas DataFrame
     df = pd.DataFrame(validated_records)
+    # Force the reading_time column to be a true UTC Timestamp instead of a naive Datetime
+    df['reading_time'] = pd.to_datetime(df['reading_time']).dt.tz_localize('UTC')
 
     # 4. Initialize BigQuery client and load to Staging Table
     print(f"Connecting to BigQuery... Staging table: {STAGING_TABLE}")
@@ -170,6 +172,6 @@ def main():
         print(f"CRITICAL ERROR: Production MERGE execution failed: {merge_err}")
         sys.exit(1)
 
-        
+
 if __name__ == "__main__":
     main()
