@@ -148,5 +148,28 @@ def main():
         print(f"CRITICAL ERROR: Failed to load data to BigQuery staging: {bq_err}")
         sys.exit(1)
 
+
+    # 5. Execute the Production Warehouse MERGE Statement
+    print("Initiating production warehouse MERGE step...")
+    merge_sql = """
+    MERGE `bqdemo-496217.air_quality_mart.fact_air_quality` AS target
+    USING `bqdemo-496217.staging.stg_raw_air_quality` AS source
+    ON target.fact_key = source.fact_key
+    WHEN MATCHED THEN
+      UPDATE SET target.pm2_5_value = source.pm2_5_value
+    WHEN NOT MATCHED THEN
+      INSERT (fact_key, reading_time, city_id, pm2_5_value)
+      VALUES (source.fact_key, source.reading_time, source.city_id, source.pm2_5_value);
+    """
+    
+    try:
+        query_job = bq_client.query(merge_sql)
+        query_job.result() # Wait for the cloud slots to finish executing the merge statement
+        print("Step 2 Complete: Production MERGE statement executed successfully. Data is fully idempotent.")
+    except Exception as merge_err:
+        print(f"CRITICAL ERROR: Production MERGE execution failed: {merge_err}")
+        sys.exit(1)
+
+        
 if __name__ == "__main__":
     main()
